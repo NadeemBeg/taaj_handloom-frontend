@@ -1,0 +1,356 @@
+/* ============================================================
+   TAAJ Handloom — cinematic looping craft story (~27s).
+   THREAD → CHARKHA → HANDLOOM → WEAVE → SAREE → MODEL,
+   closing on "Saree Being Woven for You." then dissolving
+   gently back to the opening thread so it loops forever with
+   no hard cut. HANDLOOM and the closing MODEL slide get the
+   most screen time so both read fully.
+
+   One shared timeline: every animated element runs for the same
+   --chl-loop duration with linear timing and % keyframes, so
+   0% === 100%. The hero thread stays opaque across the wrap so
+   the model-to-thread return is seamless. Pure SVG + CSS.
+   Namespaced under .chl to avoid collisions with app styles.
+   ============================================================ */
+
+.chl {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 2vh, 16px);
+  --chl-loop: 27s;
+}
+/* warm cinematic key light behind the stage */
+.chl-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(70% 55% at 50% 42%, rgba(205, 161, 75, 0.22), rgba(180, 131, 43, 0.06) 45%, transparent 70%);
+}
+
+.chl-stage {
+  position: relative;
+  z-index: 2;
+  width: 90%;
+  max-width: 520px;
+  aspect-ratio: 16 / 9;
+}
+.chl-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* each scene group shares the master timeline */
+.chl-scene {
+  transform-box: view-box;
+  transform-origin: 320px 180px;
+}
+.chl-scene,
+.chl-hero {
+  animation-duration: var(--chl-loop);
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+.chl-hero { animation-name: chl-hero; }
+.chl-s2 { animation-name: chl-s2; }
+.chl-s3 { animation-name: chl-s3; }
+.chl-s4 { animation-name: chl-s4; }
+.chl-s5 { animation-name: chl-s5; }
+.chl-s6 { animation-name: chl-s6; }
+
+/* opacity + subtle scale morph windows (easing baked via extra stops) */
+@keyframes chl-hero {
+  0% { opacity: 1; } 11% { opacity: 1; } 14% { opacity: 0; }
+  95% { opacity: 0; } 98% { opacity: 1; } 100% { opacity: 1; }
+}
+@keyframes chl-s2 {
+  0% { opacity: 0; transform: scale(0.955); } 12% { opacity: 0; transform: scale(0.955); }
+  15% { opacity: 1; transform: scale(1); } 26% { opacity: 1; transform: scale(1); }
+  29% { opacity: 0; transform: scale(1.05); } 100% { opacity: 0; transform: scale(1.05); }
+}
+@keyframes chl-s3 {
+  0% { opacity: 0; transform: scale(0.955); } 27% { opacity: 0; transform: scale(0.955); }
+  30% { opacity: 1; transform: scale(1); } 43% { opacity: 1; transform: scale(1); }
+  46% { opacity: 0; transform: scale(1.05); } 100% { opacity: 0; transform: scale(1.05); }
+}
+@keyframes chl-s4 {
+  0% { opacity: 0; transform: scale(0.955); } 44% { opacity: 0; transform: scale(0.955); }
+  47% { opacity: 1; transform: scale(1); } 60% { opacity: 1; transform: scale(1); }
+  63% { opacity: 0; transform: scale(1.06); } 100% { opacity: 0; transform: scale(1.06); }
+}
+@keyframes chl-s5 {
+  0% { opacity: 0; transform: scale(0.955); } 61% { opacity: 0; transform: scale(0.955); }
+  64% { opacity: 1; transform: scale(1); } 71% { opacity: 1; transform: scale(1); }
+  74% { opacity: 0; transform: scale(1.04); } 100% { opacity: 0; transform: scale(1.04); }
+}
+@keyframes chl-s6 {
+  0% { opacity: 0; transform: scale(0.965); } 72% { opacity: 0; transform: scale(0.965); }
+  75% { opacity: 1; transform: scale(1); } 93% { opacity: 1; transform: scale(1); }
+  96% { opacity: 0; transform: scale(1.03); } 100% { opacity: 0; transform: scale(1.03); }
+}
+
+/* hero thread: continuous strand + travelling specular */
+.chl-hero-line { stroke-linecap: round; fill: none; }
+.chl-hero-glow { animation: chl-drift var(--chl-loop) linear infinite; }
+@keyframes chl-drift {
+  0% { transform: translateY(0); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0); }
+}
+.chl-hero-spec {
+  stroke-dasharray: 26 380;
+  stroke-linecap: round;
+  fill: none;
+  animation: chl-spec 2.7s linear infinite;
+}
+@keyframes chl-spec { 0% { stroke-dashoffset: 406; } 100% { stroke-dashoffset: 0; } }
+
+/* charkha internals */
+.chl-wheel {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: chl-spin 4s linear infinite;
+}
+@keyframes chl-spin { to { transform: rotate(360deg); } }
+.chl-bobbin-fill {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: chl-fill var(--chl-loop) linear infinite;
+}
+@keyframes chl-fill {
+  0% { transform: scale(1, 0.15); } 15% { transform: scale(1, 0.15); }
+  25% { transform: scale(1, 1); } 29% { transform: scale(1, 1); } 100% { transform: scale(1, 1); }
+}
+
+/* loom internals */
+.chl-shuttle { animation: chl-shuttle 1.6s cubic-bezier(0.6, 0, 0.4, 1) infinite; }
+@keyframes chl-shuttle {
+  0% { transform: translateX(0); } 50% { transform: translateX(150px); } 100% { transform: translateX(0); }
+}
+.chl-reed { animation: chl-reed 1.6s ease-in-out infinite; }
+@keyframes chl-reed {
+  0%, 100% { transform: translateX(0); } 25%, 75% { transform: translateX(-5px); }
+}
+.chl-loom-cloth {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: chl-loomcloth var(--chl-loop) linear infinite;
+}
+@keyframes chl-loomcloth {
+  0% { transform: scaleY(0.2); } 30% { transform: scaleY(0.2); }
+  42% { transform: scaleY(1); } 44% { transform: scaleY(1); } 100% { transform: scaleY(1); }
+}
+
+/* weave: fabric grows, weft draws in */
+.chl-weave-grow {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: chl-weavegrow var(--chl-loop) linear infinite;
+}
+@keyframes chl-weavegrow {
+  0% { transform: scaleY(0); } 47% { transform: scaleY(0); }
+  59% { transform: scaleY(1); } 63% { transform: scaleY(1); } 100% { transform: scaleY(1); }
+}
+.chl-weft { stroke-dasharray: 220; animation: chl-weft var(--chl-loop) linear infinite; }
+@keyframes chl-weft {
+  0% { stroke-dashoffset: 220; } 48% { stroke-dashoffset: 220; }
+  58% { stroke-dashoffset: 0; } 63% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; }
+}
+
+/* saree: unfurl + gentle sway + sheen */
+.chl-saree-drape {
+  transform-box: view-box;
+  transform-origin: 180px 90px;
+  animation: chl-unfurl var(--chl-loop) linear infinite;
+}
+@keyframes chl-unfurl {
+  0% { transform: scaleX(0.35); } 61% { transform: scaleX(0.35); }
+  69% { transform: scaleX(1); } 71% { transform: scaleX(1); } 100% { transform: scaleX(1); }
+}
+.chl-saree-sway { animation: chl-sway 4.5s ease-in-out infinite; }
+@keyframes chl-sway {
+  0%, 100% { transform: translateY(0) skewX(0deg); } 50% { transform: translateY(-3px) skewX(-1.2deg); }
+}
+.chl-saree-sheen { animation: chl-sheen 5s ease-in-out infinite; }
+@keyframes chl-sheen {
+  0%, 100% { transform: translateX(-70px); opacity: 0; }
+  45%, 55% { opacity: 0.9; } 50% { transform: translateX(190px); }
+}
+
+/* model wearing the saree: a slow turn front → 3/4 → side → 3/4 → front */
+.chl-lady-turn {
+  transform-box: view-box;
+  transform-origin: 320px 210px;
+  animation: chl-turn var(--chl-loop) linear infinite;
+}
+@keyframes chl-turn {
+  0% { transform: scaleX(1); } 75% { transform: scaleX(1); } 79% { transform: scaleX(1); }
+  82% { transform: scaleX(0.34); } 84% { transform: scaleX(0.34); }
+  87% { transform: scaleX(1); } 100% { transform: scaleX(1); }
+}
+.chl-lady-shade {
+  transform-box: view-box;
+  animation: chl-ladyshade var(--chl-loop) linear infinite;
+}
+@keyframes chl-ladyshade {
+  0% { opacity: 0; } 79% { opacity: 0; } 82% { opacity: 0.55; }
+  84% { opacity: 0.55; } 87% { opacity: 0; } 100% { opacity: 0; }
+}
+.chl-lady-bob { animation: chl-bob 3.4s ease-in-out infinite; }
+@keyframes chl-bob {
+  0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); }
+}
+.chl-lady-pallu { transform-box: fill-box; transform-origin: top left; animation: chl-pallu 3.8s ease-in-out infinite; }
+@keyframes chl-pallu {
+  0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(1.6deg); }
+}
+
+/* scene captions (light, for the dark panel) */
+.chl-caps {
+  position: relative;
+  z-index: 2;
+  height: 2em;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chl-cap {
+  position: absolute;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: 0.5em;
+  font-size: clamp(0.95rem, 2.6vw, 1.4rem);
+  text-transform: uppercase;
+  color: #f4e6c6;
+  padding-left: 0.5em;
+  opacity: 0;
+  animation-duration: var(--chl-loop);
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+.chl-cap::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -0.5em;
+  transform: translateX(-50%);
+  width: 2.4em;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #cda14b, transparent);
+}
+.chl-cap1 { animation-name: chl-cap1; }
+.chl-cap2 { animation-name: chl-cap2; }
+.chl-cap3 { animation-name: chl-cap3; }
+.chl-cap4 { animation-name: chl-cap4; }
+.chl-cap5 { animation-name: chl-cap5; }
+@keyframes chl-cap1 {
+  0% { opacity: 1; transform: translateY(0); } 11% { opacity: 1; transform: translateY(0); }
+  14% { opacity: 0; transform: translateY(-6px); } 95% { opacity: 0; transform: translateY(6px); }
+  98% { opacity: 1; transform: translateY(0); } 100% { opacity: 1; }
+}
+@keyframes chl-cap2 {
+  0%, 16% { opacity: 0; transform: translateY(6px); } 18% { opacity: 1; transform: translateY(0); }
+  25% { opacity: 1; transform: translateY(0); } 28% { opacity: 0; transform: translateY(-6px); } 100% { opacity: 0; }
+}
+@keyframes chl-cap3 {
+  0%, 31% { opacity: 0; transform: translateY(6px); } 33% { opacity: 1; transform: translateY(0); }
+  42% { opacity: 1; transform: translateY(0); } 45% { opacity: 0; transform: translateY(-6px); } 100% { opacity: 0; }
+}
+@keyframes chl-cap4 {
+  0%, 48% { opacity: 0; transform: translateY(6px); } 50% { opacity: 1; transform: translateY(0); }
+  59% { opacity: 1; transform: translateY(0); } 62% { opacity: 0; transform: translateY(-6px); } 100% { opacity: 0; }
+}
+@keyframes chl-cap5 {
+  0%, 64% { opacity: 0; transform: translateY(6px); } 66% { opacity: 1; transform: translateY(0); }
+  70% { opacity: 1; transform: translateY(0); } 73% { opacity: 0; transform: translateY(-6px); } 100% { opacity: 0; }
+}
+
+/* final message — the closing line over the model */
+.chl-final {
+  position: absolute;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  font-size: clamp(1rem, 2.9vw, 1.55rem);
+  color: #f4e6c6;
+  white-space: nowrap;
+  opacity: 0;
+  animation: chl-final var(--chl-loop) linear infinite;
+  animation-fill-mode: both;
+}
+@keyframes chl-final {
+  0%, 85% { opacity: 0; transform: translateY(6px); }
+  88% { opacity: 1; transform: translateY(0); }
+  93% { opacity: 1; transform: translateY(0); }
+  96% { opacity: 0; transform: translateY(-4px); } 100% { opacity: 0; }
+}
+
+/* scene progress dots (6 stages) */
+.chl-dots {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 9px;
+}
+.chl-dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(231, 214, 168, 0.28);
+  animation-duration: var(--chl-loop);
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+.chl-dots i:nth-child(1) { animation-name: chl-d1; }
+.chl-dots i:nth-child(2) { animation-name: chl-d2; }
+.chl-dots i:nth-child(3) { animation-name: chl-d3; }
+.chl-dots i:nth-child(4) { animation-name: chl-d4; }
+.chl-dots i:nth-child(5) { animation-name: chl-d5; }
+.chl-dots i:nth-child(6) { animation-name: chl-d6; }
+@keyframes chl-d1 {
+  0%, 11% { background: #cda14b; transform: scale(1.5); }
+  14%, 96% { background: rgba(231, 214, 168, 0.28); transform: scale(1); } 100% { background: #cda14b; transform: scale(1.5); }
+}
+@keyframes chl-d2 {
+  0%, 15% { background: rgba(231, 214, 168, 0.28); transform: scale(1); }
+  18%, 25% { background: #cda14b; transform: scale(1.5); } 28%, 100% { background: rgba(231, 214, 168, 0.28); transform: scale(1); }
+}
+@keyframes chl-d3 {
+  0%, 30% { background: rgba(231, 214, 168, 0.28); transform: scale(1); }
+  33%, 42% { background: #cda14b; transform: scale(1.5); } 45%, 100% { background: rgba(231, 214, 168, 0.28); transform: scale(1); }
+}
+@keyframes chl-d4 {
+  0%, 47% { background: rgba(231, 214, 168, 0.28); transform: scale(1); }
+  50%, 59% { background: #cda14b; transform: scale(1.5); } 62%, 100% { background: rgba(231, 214, 168, 0.28); transform: scale(1); }
+}
+@keyframes chl-d5 {
+  0%, 64% { background: rgba(231, 214, 168, 0.28); transform: scale(1); }
+  66%, 70% { background: #cda14b; transform: scale(1.5); } 73%, 100% { background: rgba(231, 214, 168, 0.28); transform: scale(1); }
+}
+@keyframes chl-d6 {
+  0%, 75% { background: rgba(231, 214, 168, 0.28); transform: scale(1); }
+  77%, 92% { background: #cda14b; transform: scale(1.5); } 95%, 100% { background: rgba(231, 214, 168, 0.28); transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chl-scene, .chl-hero, .chl-cap, .chl-final, .chl-dots i, .chl-wheel, .chl-bobbin-fill, .chl-shuttle,
+  .chl-reed, .chl-loom-cloth, .chl-weave-grow, .chl-weft, .chl-saree-drape, .chl-saree-sway,
+  .chl-saree-sheen, .chl-hero-glow, .chl-hero-spec, .chl-lady-turn, .chl-lady-shade,
+  .chl-lady-bob, .chl-lady-pallu {
+    animation: none !important;
+  }
+  .chl-s2, .chl-s3, .chl-s4, .chl-s5, .chl-s6 { opacity: 0; }
+  .chl-hero { opacity: 1; }
+  .chl-cap1 { opacity: 1; }
+  .chl-cap2, .chl-cap3, .chl-cap4, .chl-cap5, .chl-final { opacity: 0; }
+  .chl-dots i:nth-child(1) { background: #cda14b; }
+}

@@ -1,0 +1,222 @@
+/* ============================================================
+   TAAJ Handloom — brand loading screen (loom weaving a saree)
+   Pure SVG + CSS. Namespaced under .tl-loader to avoid collisions.
+   Timings for the grow/rise/bar are driven by the --tl-weave CSS
+   variable set from BrandLoader.tsx so JS + CSS stay in sync.
+   ============================================================ */
+
+.tl-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(18px, 3.5vh, 34px);
+  background: radial-gradient(130% 100% at 50% 20%, #fff 0%, #fefbf6 40%, #fbf6ee 100%);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.9s;
+  will-change: opacity, transform;
+}
+.tl-loader.tl-lift {
+  opacity: 0;
+  transform: translateY(-3%) scale(1.015);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* wordmark */
+.tl-wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 0;
+  animation: tl-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+.tl-name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-size: clamp(1.5rem, 4.4vw, 2.15rem);
+  color: #6b1e2b;
+  line-height: 1;
+}
+.tl-name b {
+  color: #b4832b;
+  font-weight: 600;
+}
+.tl-sub {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 10.5px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: #806a6d;
+}
+.tl-rule {
+  width: 44px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #b4832b, transparent);
+  margin-top: 2px;
+  opacity: 0.8;
+}
+
+/* loom stage */
+.tl-stage {
+  width: min(84vw, 420px);
+  opacity: 0;
+  animation: tl-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+}
+.tl-loom {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* caption */
+.tl-caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  opacity: 0;
+  animation: tl-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+}
+.tl-main {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.25rem, 4.6vw, 1.9rem);
+  color: #6b1e2b;
+  letter-spacing: 0.01em;
+}
+.tl-main .tl-shine {
+  background: linear-gradient(100deg, #6b1e2b 30%, #cda14b 50%, #6b1e2b 70%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: tl-shine 3.4s ease-in-out infinite;
+}
+.tl-capsub {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #806a6d;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.tl-capsub i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #b4832b;
+  display: inline-block;
+}
+
+/* progress bar */
+.tl-bar {
+  width: min(60vw, 220px);
+  height: 2px;
+  border-radius: 2px;
+  background: #ecdfd2;
+  overflow: hidden;
+  opacity: 0;
+  animation: tl-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both;
+}
+.tl-bar span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #b4832b, #cda14b);
+  animation: tl-fill var(--tl-weave, 4400ms) cubic-bezier(0.5, 0, 0.2, 1) forwards;
+}
+
+@keyframes tl-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes tl-shine {
+  0% { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
+}
+@keyframes tl-fill {
+  0% { width: 0; }
+  92% { width: 100%; }
+  100% { width: 100%; }
+}
+
+/* ---- the weave itself ---- */
+#tlFabClipRect {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transform: scaleY(0);
+}
+.tl-loader.tl-go #tlFabClipRect {
+  animation: tl-grow var(--tl-weave, 4400ms) cubic-bezier(0.45, 0.02, 0.35, 1) forwards;
+}
+@keyframes tl-grow {
+  0% { transform: scaleY(0); }
+  100% { transform: scaleY(1); }
+}
+
+#tlShuttleRise { transform: translateY(168px); }
+.tl-loader.tl-go #tlShuttleRise {
+  animation: tl-rise-y var(--tl-weave, 4400ms) cubic-bezier(0.45, 0.02, 0.35, 1) forwards;
+}
+@keyframes tl-rise-y {
+  0% { transform: translateY(168px); }
+  100% { transform: translateY(0); }
+}
+
+#tlShuttleSweep { transform: translateX(0); }
+.tl-loader.tl-go #tlShuttleSweep {
+  animation: tl-sweep 1.5s cubic-bezier(0.6, 0, 0.4, 1) infinite;
+}
+@keyframes tl-sweep {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(196px); }
+  100% { transform: translateX(0); }
+}
+
+#tlReed { transform: translateY(0); }
+.tl-loader.tl-go #tlReed {
+  animation: tl-reed 1.5s ease-in-out infinite;
+}
+@keyframes tl-reed {
+  0%, 100% { transform: translateY(0); }
+  25%, 75% { transform: translateY(2.5px); }
+}
+
+#tlSheen { transform: translateX(0); }
+.tl-loader.tl-go #tlSheen {
+  animation: tl-sheen 3.8s ease-in-out 1.4s infinite;
+}
+@keyframes tl-sheen {
+  0% { transform: translateX(-10px); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateX(176px); opacity: 0; }
+}
+
+.tl-loader.tl-go .tl-warpline {
+  animation: tl-warp 2.6s ease-in-out infinite;
+}
+@keyframes tl-warp {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.8; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tl-main .tl-shine { animation: none; color: #6b1e2b; }
+  #tlShuttleSweep, #tlReed, .tl-warpline, #tlSheen { animation: none; }
+  .tl-loader.tl-go #tlFabClipRect,
+  .tl-loader.tl-go #tlShuttleRise { animation-duration: 1ms; }
+  .tl-bar span { animation-duration: 1ms; }
+}

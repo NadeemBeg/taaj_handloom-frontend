@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ivory text-charcoal font-sans antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display text-charcoal;
+    text-wrap: balance;
+  }
+  h1 {
+    @apply text-4xl font-semibold leading-tight md:text-5xl;
+  }
+  h2 {
+    @apply text-3xl font-semibold leading-tight md:text-4xl;
+  }
+  h3 {
+    @apply text-2xl font-semibold leading-snug;
+  }
+  /* Prices and any tabular data align on their digits. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand/50 ring-offset-2 ring-offset-ivory;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Section eyebrow — uppercase gold micro-label with a hairline. */
+  .eyebrow {
+    @apply inline-flex items-center gap-3 text-xs font-bold uppercase tracking-label text-gold;
+  }
+
+  /* Pill badge for product flags / statuses. */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide;
+  }
+
+  /* Soft chip used for categories / tints. */
+  .chip {
+    @apply inline-flex items-center rounded-full bg-sage px-2.5 py-0.5 text-xs font-medium text-forest-700;
+  }
+
+  /* Premium surface card. */
+  .surface {
+    @apply rounded-2xl bg-white shadow-card ring-1 ring-line/60;
+  }
+
+  /* Text form field. */
+  .tf {
+    @apply w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-charcoal placeholder:text-muted/70
+      focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/25;
+  }
+
+  /* Skeleton shimmer block. */
+  .skeleton {
+    @apply relative overflow-hidden rounded-lg bg-sage/60;
+  }
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0 -translate-x-full;
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.55),
+      transparent
+    );
+    animation: shimmer 1.6s infinite;
+  }
+}

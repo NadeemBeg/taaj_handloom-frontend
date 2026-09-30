@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Keep transactional pages out of the index
+Disallow: /cart
+Disallow: /checkout
+Disallow: /order/
