@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "npm run build:shared && tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "eslint \"src/**/*.{ts,tsx}\""
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "build:shared": "tsc -p shared/tsconfig.json"
   },
   "dependencies": {
-    "@taaj/shared": "*",
+    "@taaj/shared": "file:./shared",
     "@hookform/resolvers": "^3.9.0",
     "@tanstack/react-query": "^5.51.0",
     "axios": "^1.7.4",
